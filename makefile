@@ -1,7 +1,10 @@
 WHACK_RUN_SOURCE_HASH=$(shell sha1sum whack-run.c | sed -n 's/\(\S*\).*/\1/p')
+WHACK_VERSION=1.0.0
 
 whack-run: whack-run.c
-	gcc whack-run.c -owhack-run -Wall -Werror -std=gnu99 -DWHACK_RUN_SOURCE_HASH=\"$(WHACK_RUN_SOURCE_HASH)\"
+	gcc whack-run.c -owhack-run -Wall -Werror -std=gnu99 \
+		-DWHACK_RUN_SOURCE_HASH=\"$(WHACK_RUN_SOURCE_HASH)\" \
+		-DWHACK_VERSION=\"$(WHACK_VERSION)\"
 
 install: whack-run
 	mkdir -p /usr/local/whack

@@ -40,6 +40,10 @@ int main(int argc, char **argv) {
         printf("%s\n", WHACK_RUN_SOURCE_HASH);
         return 0;
     }
+    if (argc == 2 && strcmp(argv[1], "--version") == 0) {
+        printf("%s\n", WHACK_VERSION);
+        return 0;
+    }
     
     if (argc < 3) {
         printf("Usage: %s <apps-dir> <app> <args>\n", argv[0]);
