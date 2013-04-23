@@ -1,5 +1,5 @@
 WHACK_RUN_SOURCE_HASH=$(shell sha1sum whack-run.c | sed -n 's/\(\S*\).*/\1/p')
-WHACK_VERSION=1.0.0
+WHACK_VERSION=1.1.0-dev
 
 whack-run: whack-run.c
 	gcc whack-run.c -owhack-run -Wall -Werror -std=gnu99 \
