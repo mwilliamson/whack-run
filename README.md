@@ -27,12 +27,12 @@ although you're welcome to use it for other purposes.
 You can invoke whack-run like so:
 
 ```
-whack-run &lt;apps-dir&gt; &lt;app&gt; &lt;args&gt;
+whack-run <apps-dir> <app> <args>
 ```
 
 Roughly speaking,
-this mounts `&lt;apps-dir&gt;` to `/usr/local/whack` in a private mount namespace,
-and then runs `&lt;app&gt;` with arguments `&lt;args&gt;`.
+this mounts `<apps-dir>` to `/usr/local/whack` in a private mount namespace,
+and then runs `<app>` with arguments `<args>`.
 Since whack-run uses `unshare` and `mount`, whack-run has the `setuid` bit set.
 It drops these privileges before invoking the specified application.
 
@@ -62,10 +62,10 @@ For an actual use case, take a look at whack.
 
 ```
 $ mkdir -p example
-$ echo -n 'Hello ' &gt; example/message
-$ echo '#!/usr/bin/env sh' &gt; example/greet
-$ echo 'cat /usr/local/whack/message' &gt;&gt; example/greet
-$ echo 'echo $1' &gt;&gt; example/greet
+$ echo -n 'Hello ' > example/message
+$ echo '#!/usr/bin/env sh' > example/greet
+$ echo 'cat /usr/local/whack/message' >> example/greet
+$ echo 'echo $1' >> example/greet
 $ chmod +x example/greet
 $ whack-run example /usr/local/whack/greet Bob
 Hello Bob
