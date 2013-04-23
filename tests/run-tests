@@ -1,0 +1,24 @@
+#!/usr/bin/env sh
+
+TEST_DIR=$(dirname "$0")
+WHACK_RUN="$TEST_DIR/../whack-run"
+
+assert_equal() {
+    if [ "$OUTPUT" = "$EXPECTED" ]; then
+        echo .
+    else
+        echo Assertion failed
+        echo Output was: $OUTPUT
+        echo Expected was: $EXPECTED
+        FAILED=1
+    fi
+}
+
+OUTPUT=`"$WHACK_RUN" "$TEST_DIR" cat /usr/local/whack/hello`
+EXPECTED="Hello there!"
+assert_equal
+
+if [ -n "$FAILED" ]; then
+    echo "Tests failed"
+    exit 1
+fi

@@ -10,3 +10,6 @@ install: whack-run
 	mkdir -p /usr/local/whack
 	cp whack-run /usr/local/bin/whack-run
 	chmod +s /usr/local/bin/whack-run
+
+test: whack-run
+	tests/run-tests
