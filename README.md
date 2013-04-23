@@ -38,12 +38,12 @@ It drops these privileges before invoking the specified application.
 
 More precisely:
 
-# `unshare(CLONE_NEWNS)` creates a private mount namespace.
+1. `unshare(CLONE_NEWNS)` creates a private mount namespace.
   This means that any future `mount` calls in the process only affect that process.
 
-# The directory `/usr/local/whack` is created if it doesn't already exist.
+1. The directory `/usr/local/whack` is created if it doesn't already exist.
 
-# Any existing mount at `/usr/local/whack` is unmounted.
+1. Any existing mount at `/usr/local/whack` is unmounted.
   To see why not doing so could be problematic,
   consider if we run `script-parent` under `root-parent`,
   which then runs `script-child` under `root-child`.
@@ -51,9 +51,9 @@ More precisely:
   then we can't remove the directory `root-parent`
   since it contains the mount point for `root-child`.
 
-# `setguid` privileges are dropped.
+1. `setguid` privileges are dropped.
 
-# `exec` is used to invoke the specified application.
+1. `exec` is used to invoke the specified application.
 
 ## Example
 
