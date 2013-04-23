@@ -51,7 +51,7 @@ More precisely:
   then we can't remove the directory `root-parent`
   since it contains the mount point for `root-child`.
 
-1. `setguid` privileges are dropped.
+1. `setuid` privileges are dropped.
 
 1. `exec` is used to invoke the specified application.
 
