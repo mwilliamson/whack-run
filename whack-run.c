@@ -78,6 +78,13 @@ int main(int argc, char **argv) {
         printf("ERROR: Could not create %s\n", apps_dest_dir);
         return 1;
     }
+    
+    // Unmount any existing mount to avoid multiple mounts on the same location
+    // To see why this is a problem, consider if we run script-a under
+    // root-a, and script-b under root-b. If script-b starts a
+    // long-running daemon, then we can't remove the directory root-a,
+    // since it contains the mount for root-b
+    umount(apps_dest_dir);
     char* apps_src_dir = argv[1];
     if (mount_bind(apps_src_dir, apps_dest_dir) != 0) {
         printf("ERROR: Could not mount %s\n", apps_src_dir);
