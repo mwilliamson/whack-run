@@ -109,6 +109,7 @@ int main(int argc, char **argv) {
         if (pid > 0) {
             int status = 0;
             waitpid(pid, &status, 0);
+            umount2(apps_dest_dir, MNT_DETACH);
 
             if (WIFEXITED(status)) {
                 return WEXITSTATUS(status);
