@@ -25,10 +25,16 @@ ACTUAL=`"$WHACK_RUN" "$TEST_DIR" --fork cat /usr/local/whack/hello`
 EXPECTED="Hello there!"
 assert_equal
 
-# fork return code
+# --fork return code
 `"$WHACK_RUN" "$TEST_DIR" --fork sh -c 'exit 2'`
 ACTUAL="$?"
 EXPECTED=2
+assert_equal
+
+# --fork return code when child is killed
+`"$WHACK_RUN" "$TEST_DIR" --fork sh -c 'kill $$'`
+ACTUAL="$?"
+EXPECTED=143
 assert_equal
 
 if [ -n "$FAILED" ]; then
