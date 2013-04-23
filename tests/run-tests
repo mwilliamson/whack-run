@@ -4,18 +4,31 @@ TEST_DIR=$(dirname "$0")
 WHACK_RUN="$TEST_DIR/../whack-run"
 
 assert_equal() {
-    if [ "$OUTPUT" = "$EXPECTED" ]; then
+    if [ "$ACTUAL" = "$EXPECTED" ]; then
         echo .
     else
         echo Assertion failed
-        echo Output was: $OUTPUT
+        echo Actual was: $ACTUAL
         echo Expected was: $EXPECTED
+        echo
         FAILED=1
     fi
 }
 
-OUTPUT=`"$WHACK_RUN" "$TEST_DIR" cat /usr/local/whack/hello`
+# Normal usage
+ACTUAL=`"$WHACK_RUN" "$TEST_DIR" cat /usr/local/whack/hello`
 EXPECTED="Hello there!"
+assert_equal
+
+# --fork
+ACTUAL=`"$WHACK_RUN" "$TEST_DIR" --fork cat /usr/local/whack/hello`
+EXPECTED="Hello there!"
+assert_equal
+
+# fork return code
+`"$WHACK_RUN" "$TEST_DIR" --fork sh -c 'exit 2'`
+ACTUAL="$?"
+EXPECTED=2
 assert_equal
 
 if [ -n "$FAILED" ]; then

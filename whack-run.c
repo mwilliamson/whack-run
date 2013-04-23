@@ -6,6 +6,7 @@
 #include <sys/syscall.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/wait.h>
 
 #ifndef CLONE_NEWNS
 #define CLONE_NEWNS 0x00020000
@@ -35,6 +36,21 @@ int mount_bind(char* src_path, char* dest_path) {
     return mount(src_path, dest_path, NULL, MS_BIND, NULL);
 }
 
+int str_starts_with(const char *str, const char *prefix) {
+    size_t prefix_len = strlen(prefix);
+    size_t str_len = strlen(str);
+    return str_len < prefix_len ? 0 : strncmp(prefix, str, prefix_len) == 0;
+}
+
+int should_fork(int argc, char **argv) {
+    for (int i = 0; i < argc; i++) {
+        if (strcmp(argv[i], "--fork") == 0) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
 int main(int argc, char **argv) {
     if (argc == 2 && strcmp(argv[1], "--source-hash") == 0) {
         printf("%s\n", WHACK_RUN_SOURCE_HASH);
@@ -45,8 +61,13 @@ int main(int argc, char **argv) {
         return 0;
     }
     
-    if (argc < 3) {
-        printf("Usage: %s <apps-dir> <app> <args>\n", argv[0]);
+    int app_index = 2;
+    while (app_index < argc && str_starts_with(argv[app_index], "--")) {
+        app_index++;
+    }
+    
+    if (app_index >= argc) {
+        printf("Usage: %s <apps-dir> [--fork] <app> <args>\n", argv[0]);
         return 1;
     }
     if (unshare_mount_namespace() != 0) {
@@ -72,12 +93,26 @@ int main(int argc, char **argv) {
         return 1;
     }
     
-    char* app = argv[2];
+    char* app = argv[app_index];
     char** app_args = (char**)malloc(sizeof(char*) * (argc - 1));
-    for (int i = 2; i < argc; i++) {
-        app_args[i - 2] = argv[i];
+    for (int i = 0; i < argc - app_index; i++) {
+        app_args[i] = argv[i + app_index];
     }
-    app_args[argc - 2] = 0;
+    app_args[argc - app_index] = 0;
+    
+    if (should_fork(app_index, argv)) {
+        int pid = fork();
+        if (pid < 0) {
+            printf("ERROR: failed to fork\n");
+            return 1;
+        }
+        if (pid > 0) {
+            int status = 0;
+            waitpid(pid, &status, 0);
+            // TODO: handle !WIFEXITED(status)
+            return WEXITSTATUS(status);
+        }
+    }
     
     if (execvp(app, app_args) != 0) {
         printf("ERROR: failed to exec %s\n", app);
