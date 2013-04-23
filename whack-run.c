@@ -109,7 +109,7 @@ int main(int argc, char **argv) {
         if (pid > 0) {
             int status = 0;
             waitpid(pid, &status, 0);
-            // TODO: handle !WIFEXITED(status)
+
             if (WIFEXITED(status)) {
                 return WEXITSTATUS(status);
             } else if (WIFSIGNALED(status)) {
